@@ -47,15 +47,24 @@ const debounce = (delay, callback) => {
 }
 
 const throttle = (limit, callback) => {
-    let isThrottling;
+    let isRan;
+    let lastRunTime;
+    let timeout;
     return function(){
         let context = this;
         let args = arguments;
-        if(!isThrottling){
+
+        if(!isRan){
             callback.apply(context, args);
-            isThrottling = true;
-            setTimeout( () => isThrottling = false, limit);
+            isRan = true;
+            lastRunTime = Date.now();
         }
+        clearTimeout(timeout);
+        timeout = setTimeout( () => {
+            callback.apply(context, args);
+            lastRunTime = Date.now();
+        }, limit - (Date.now() - lastRunTime));
+        
     }
 }
 
